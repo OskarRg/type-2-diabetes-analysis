@@ -1,5 +1,6 @@
 import pandas as pd
 
+
 class DataLoader:
     """Handles loading and basic inspection of the dataset."""
 

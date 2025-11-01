@@ -7,9 +7,13 @@
 - [x] Create an initial proposal for the program structure (could change anytime when the need occurs).
 
 ### 🔹 Stage 2 – Exploratory Data Analysis (EDA)
-- [ ] Analyze feature distributions and descriptive statistics  
-- [ ] Detect missing values and outliers  
-- [ ] Visualize relationships between features  
+- [x] Analyze feature distributions and descriptive statistics
+- [x] Analyze data types in the dataset
+- [x] Detect missing values
+- [x] Detect outliers
+- [x] Perform correlation analysis between features and target 
+- [x] Visualize relationships between features
+- [x] Evaluate data quality
 
 ### 🔹 Stage 3 – Data Preparation
 - [ ] Examine and handle missing values (fill or drop)  
@@ -18,22 +22,25 @@
 - [ ] Split data into training and testing sets  
 
 ### 🔹 Stage 4 – Feature Selection
-- [ ] Perform correlation analysis between features and target  
-- [ ] Determine the most important features (feature importance)  
+- [ ] Perform correlation analysis between features and target (similarly to the step in EDA) 
+- [ ] Determine the most important features (feature importance)
 
 ### 🔹 Stage 5 – Modeling
-- [ ] Implement `ModelTrainer` class  
-- [ ] Train models: Logistic Regression, Random Forest, XGBoost  
-- [ ] Save the best models to a file  
+- [ ] Implement something like a `ModelTrainer` class
+- [ ] Train models: Logistic Regression, Random Forest, XGBoost, ...
+- [ ] Save the best models to files
 
 ### 🔹 Stage 6 – Evaluation and Interpretation
-- [ ] Compute evaluation metrics (Accuracy, Precision, Recall, F1, AUC)  
-- [ ] Visualize results (ROC curve, confusion matrix)  
-- [ ] Compare model performance  
+- [ ] Compute evaluation metrics (Accuracy, Precision, Recall, F1, AUC) (might be done in stage 5 already)  
+- [ ] Visualize results (ROC curve, confusion matrix)
+- [ ] Optimize models hyperparameters
+- [ ] Compare model performance
+- [ ] Create a dynamic configuration enabling easy testing and research
+
 
 ### 🔹 Stage 7 – Reporting and Presentation
 - [ ] Prepare a report with results and conclusions
-- [ ] Prepare a poster visualizing results 
+- [ ] Prepare a poster visualizing results
 
 ---
 
@@ -59,9 +66,9 @@ This approach also allows saving **experiment results separately**, making it ea
      ```yaml
      data_path: "data/diabetes.csv"
      target: "Outcome"
-     test_size: 0.2
+     test_size: 0.2  # idk if seed would also be useful
      models:
-       logistic_regression:
+       logistic_regression:  # just an example
          C: 1.0
          max_iter: 1000
        random_forest:
