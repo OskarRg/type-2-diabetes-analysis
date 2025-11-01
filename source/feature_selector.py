@@ -1,5 +1,6 @@
 import pandas as pd
 
+
 class FeatureSelector:
     """Selects the most relevant features based on statistical or model-based methods."""
 

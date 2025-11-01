@@ -1,9 +1,10 @@
-from src.data_loader import DataLoader
-from src.preprocessor import Preprocessor
-from src.feature_selector import FeatureSelector
-from src.model_trainer import ModelTrainer
-from src.model_evaluator import ModelEvaluator
-from src.visualizer import Visualizer
+from source.data_loader import DataLoader
+from source.preprocessor import Preprocessor
+from source.feature_selector import FeatureSelector
+from source.model_trainer import ModelTrainer
+from source.model_evaluator import ModelEvaluator
+from source.visualizer import Visualizer
+
 
 class Pipeline:
     """Main class orchestrating the entire machine learning workflow."""

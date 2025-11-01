@@ -1,6 +1,3 @@
-import matplotlib.pyplot as plt
-import seaborn as sns
-
 class Visualizer:
     """Handles data visualization and model performance plots."""
 
