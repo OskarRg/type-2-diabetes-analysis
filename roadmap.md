@@ -16,10 +16,10 @@
 - [x] Evaluate data quality
 
 ### 🔹 Stage 3 – Data Preparation
-- [ ] Examine and handle missing values (fill or drop)  
-- [ ] Encode categorical variables  
-- [ ] Normalize / standardize features  
-- [ ] Split data into training and testing sets  
+- [x] Examine and handle missing values (fill or drop)  
+- [x] Encode categorical variables  
+- [x] Normalize / standardize features  
+- [x] Split data into training and testing sets  
 
 ### 🔹 Stage 4 – Feature Selection
 - [ ] Perform correlation analysis between features and target (similarly to the step in EDA) 
