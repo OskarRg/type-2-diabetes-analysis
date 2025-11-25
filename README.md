@@ -24,5 +24,31 @@ The dataset consists of 18 variables describing, among others:
 
 - **Demographic parameters** (e.g., age, gender)  
 - **Clinical parameters** (e.g., glucose level, blood pressure, BMI)  
-- **Lifestyle information** (e.g., smoking, physical activity)  
+- **Lifestyle information** (e.g., smoking, drinking)  
 - **Other factors**
+
+## Start The Project
+
+### 1. Create a virtual environment
+
+```bash
+python -m venv .venv
+source .venv/bin/activate       # Linux / macOS
+.venv\Scripts\activate          # Windows
+```
+### 2. Install requirements
+```
+pip install -r requirements.txt
+```
+
+### 3. Current way to run the project does not include any params or configuration file
+
+```
+python main.py
+```
+
+### 4. Remember to test the project after making changes
+
+```
+pytest -vv
+```
