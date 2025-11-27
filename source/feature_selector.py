@@ -1,20 +1,52 @@
 import pandas as pd
+from sklearn.base import ClassifierMixin
 
 
 class FeatureSelector:
-    """Selects the most relevant features based on statistical or model-based methods."""
+    """
+    Selects the most relevant features based on statistical correlation or model-based importance.
+    """
 
-    def __init__(self):
-        pass
+    def correlation_analysis(
+        self,
+        df: pd.DataFrame,
+        target: str,
+        method: str = "pearson",
+        top_n: int = 10,
+    ) -> tuple[pd.Series, list[str]]:
+        """
+        Perform correlation analysis between each feature and the target.
 
-    def correlation_analysis(self, df: pd.DataFrame):
-        """Perform correlation analysis among features."""
-        raise NotImplementedError
+        :param df: Input dataframe.
+        :param target: Name of the target column.
+        :param method: Correlation method: 'pearson', 'spearman', 'kendall'.
+        :return: Sorted Series of correlations (absolute value).
+        """
+        # TODO Consider deleting features that have a strong corelation between themselves - config.
+        corr: pd.Series = df.corr(method=method)[target].drop(target)
+        corr_sorted: pd.Series = corr.abs().sort_values(ascending=False)
 
-    def select_features_by_importance(self, model, top_n: int = 10):
-        """Select the most important features based on model feature importance."""
-        raise NotImplementedError
+        selected_features: list[str] = corr_sorted.head(top_n).index.tolist()
 
-    def show_feature_ranking(self):
-        """Display a ranked list of important features."""
-        raise NotImplementedError
+        return corr_sorted, selected_features
+
+    def select_features_by_importance(
+        self,
+        model: ClassifierMixin,
+        feature_names: list[str],
+        top_n: int = 10,
+    ) -> list[str]:
+        """
+        Select most important features based on model.feature_importances_.
+
+        :param model: Trained model with `feature_importances_` attribute.
+        :param feature_names: List of available feature names.
+        :param top_n: Number of features to select.
+        :return: List of selected feature names.
+        """
+        if not hasattr(model, "feature_importances_"):
+            raise ValueError("Model does not provide `feature_importances_`.")
+
+        importances: pd.Series = pd.Series(model.feature_importances_, index=feature_names)
+        sorted_importances: pd.Series = importances.sort_values(ascending=False)
+        return sorted_importances.head(top_n).index.tolist()

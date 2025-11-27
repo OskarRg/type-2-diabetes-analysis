@@ -85,10 +85,13 @@ class Preprocessor:
         logger.debug("Encoding categorical variables...")
 
         df: pd.DataFrame = df.copy()
+        self.encoded_columns = []
 
         for col in CATEGORICAL_MULTI:
             if col in df.columns:
-                dummies: pd.DataFrame = pd.get_dummies(df[col], prefix=col, drop_first=False)
+                dummies: pd.DataFrame = pd.get_dummies(
+                    df[col], prefix=col, drop_first=False, dtype=int
+                )
                 df = pd.concat([df.drop(columns=[col]), dummies], axis=1)
                 self.encoded_columns.extend(dummies.columns.tolist())
                 logger.debug(f"One-Hot encoded column: {col}")

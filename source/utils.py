@@ -2,14 +2,20 @@ from enum import Enum
 
 
 class MissingHandlingStrategy(str, Enum):
+    DROP: str = "drop"
     MEAN: str = "mean"
     MEDIAN: str = "median"
-    DROP: str = "drop"
 
 
 class FixCategoricalStrategy(str, Enum):
     CLIP: str = "clip"
     DROP: str = "drop"
+
+
+class CorelationMethod(str, Enum):
+    KENDALL: str = "kendall"
+    PEARSON: str = "pearson"
+    SPEARMAN: str = "spearman"
 
 
 #  Things below could be moved to a config file.

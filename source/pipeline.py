@@ -5,6 +5,7 @@ from source.feature_selector import FeatureSelector
 from source.model_evaluator import ModelEvaluator
 from source.model_trainer import ModelTrainer
 from source.preprocessor import Preprocessor
+from source.utils import TARGET
 from source.visualizer import Visualizer
 
 if TYPE_CHECKING:
@@ -30,3 +31,8 @@ class Pipeline:
         df = self.preprocessor.fix_categorical_values(df)
         df = self.preprocessor.encode_categorical(df)  # OHE should be used for SVM and LR
         df = self.preprocessor.normalize_features(df)
+        #  TODO Add config with a section `correlation_based_features`
+        correlation_info, best_features_list = self.feature_selector.correlation_analysis(
+            df=df, target=TARGET
+        )
+        df = df[best_features_list + [TARGET]]

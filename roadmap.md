@@ -22,8 +22,9 @@
 - [x] Split data into training and testing sets  
 
 ### 🔹 Stage 4 – Feature Selection
-- [ ] Perform correlation analysis between features and target (similarly to the step in EDA) 
-- [ ] Determine the most important features (feature importance)
+- [x] Perform correlation analysis between features and target (similarly to the step in EDA)
+- [x] Determine the most important features (feature importance)
+- [ ] Optionally MIC could be performed, but `minepy` is not compatible with currently used `numpy` version, it could be performed outside of the project environment.
 
 ### 🔹 Stage 5 – Modeling
 - [ ] Implement something like a `ModelTrainer` class
