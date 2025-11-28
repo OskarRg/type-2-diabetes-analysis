@@ -27,9 +27,11 @@
 - [ ] Optionally MIC could be performed, but `minepy` is not compatible with currently used `numpy` version, it could be performed outside of the project environment.
 
 ### 🔹 Stage 5 – Modeling
-- [ ] Implement something like a `ModelTrainer` class
-- [ ] Train models: Logistic Regression, Random Forest, XGBoost, ...
-- [ ] Save the best models to files
+- [x] Implement something like a `ModelTrainer` class
+- [x] Train models: Logistic Regression, Random Forest, XGBoost, ...
+- [x] Save the best models to files
+- [ ] Create a DataSplitter
+- [ ] Create a simple YAML config file
 
 ### 🔹 Stage 6 – Evaluation and Interpretation
 - [ ] Compute evaluation metrics (Accuracy, Precision, Recall, F1, AUC) (might be done in stage 5 already)  
