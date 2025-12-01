@@ -26,3 +26,7 @@ def setup_logging(level: int = logging.INFO) -> None:
         format="%(asctime)s - %(levelname)s - [%(name)s] - %(message)s",
         handlers=[logging.StreamHandler(sys.stdout)],
     )
+    noisy_libraries: list[str] = ["matplotlib", "seaborn", "PIL", "numexpr"]
+
+    for lib_name in noisy_libraries:
+        logging.getLogger(lib_name).setLevel(logging.WARNING)
