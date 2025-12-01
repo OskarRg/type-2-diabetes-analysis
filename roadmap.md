@@ -30,11 +30,11 @@
 - [x] Implement something like a `ModelTrainer` class
 - [x] Train models: Logistic Regression, Random Forest, XGBoost, ...
 - [x] Save the best models to files
-- [ ] Create a DataSplitter
+- [x] Implement `ModelEvaluator` class
 - [ ] Create a simple YAML config file
 
 ### 🔹 Stage 6 – Evaluation and Interpretation
-- [ ] Compute evaluation metrics (Accuracy, Precision, Recall, F1, AUC) (might be done in stage 5 already)  
+- [x] Compute evaluation metrics (Accuracy, Precision, Recall, F1, AUC) (might be done in stage 5 already)  
 - [ ] Visualize results (ROC curve, confusion matrix)
 - [ ] Optimize models hyperparameters
 - [ ] Compare model performance

@@ -1,5 +1,10 @@
+import time
 from enum import Enum
-from typing import Literal, TypedDict
+from pathlib import Path
+from typing import Literal, TypeAlias, TypedDict
+
+import pandas as pd
+from sklearn.model_selection import train_test_split
 
 
 class MissingHandlingStrategy(str, Enum):
@@ -17,6 +22,11 @@ class CorelationMethod(str, Enum):
     KENDALL: str = "kendall"
     PEARSON: str = "pearson"
     SPEARMAN: str = "spearman"
+
+
+class AnomalyDetectionStrategy(str, Enum):
+    IQR: str = "iqr"
+    ISOLATION_FOREST: str = "isolation_forest"
 
 
 class RandomForestParams(TypedDict, total=False):
@@ -59,6 +69,31 @@ class LogisticRegressionParams(TypedDict, total=False):
     multi_class: Literal["auto", "ovr", "multinomial"]
     l1_ratio: float | None
 
+
+class MetricsDict(TypedDict):
+    accuracy: float
+    precision: float
+    recall: float
+    f1_score: float
+    roc_auc: float
+
+
+SplittedData: TypeAlias = list[pd.DataFrame, pd.DataFrame, pd.Series, pd.Series]
+
+
+def prepare_data_split(df: pd.DataFrame, target_col: str, test_size: float = 0.2) -> SplittedData:
+    """
+    Splits the dataframe ensuring consistent random_state and stratification.
+
+    :param df: Dataframe with the data to be splitted.
+    :param target_col: Target column.
+    :param test_size: Test group size.
+    """
+    X: pd.DataFrame = df.drop(columns=[target_col])
+    y: pd.Series = df[target_col]
+    return train_test_split(X, y, test_size=test_size, random_state=42, stratify=y)
+
+
 #  Things below could be moved to a config file.
 RENAME_MAPPING: dict[str, str] = {"family_histroy": "family_history"}
 
@@ -70,3 +105,7 @@ CATEGORICAL_DATA_VALID_RANGES: dict[str, tuple[int, int]] = {
     "smoking": (1, 3),
     "drinking": (1, 3),
 }
+
+LR_RESULTS_PATH: Path = Path("results/models/LR/")
+RF_RESULTS_PATH: Path = Path("results/models/RF/")
+JSON_REPORT_NAME: str = f"{int(time.time())}.json"

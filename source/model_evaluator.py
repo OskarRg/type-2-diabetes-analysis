@@ -1,17 +1,140 @@
-class ModelEvaluator:
-    """Evaluates and compares model performance."""
+import json
+import logging
+from pathlib import Path
 
-    def __init__(self):
+import matplotlib.pyplot as plt
+import numpy as np
+import seaborn as sns
+from sklearn.base import ClassifierMixin
+from sklearn.metrics import (
+    accuracy_score,
+    classification_report,
+    confusion_matrix,
+    f1_score,
+    precision_score,
+    recall_score,
+    roc_auc_score,
+)
+
+from source.utils import MetricsDict
+
+logger = logging.getLogger(__name__)
+
+
+class ModelEvaluator:
+    """
+    Evaluates and compares machine learning model performance.
+
+    This class provides:
+
+    - computation of common classification metrics
+    - confusion matrix visualization
+    - comparison of multiple models based on their metrics
+    """
+
+    def __init__(self) -> None:
+        """Initialize the evaluator."""
         pass
 
-    def evaluate(self, model, X_test, y_test):
-        """Evaluate a model and return common performance metrics."""
-        raise NotImplementedError
+    @staticmethod
+    def evaluate(
+        model: ClassifierMixin,
+        X_test: np.ndarray | list[list[float]],
+        y_test: np.ndarray | list[int],
+    ) -> MetricsDict:
+        """
+        Evaluate a model and compute standard classification metrics.
 
-    def plot_confusion_matrix(self):
-        """Plot the confusion matrix for a given model."""
-        raise NotImplementedError
+        :param model: Trained classifier implementing `predict` and `predict_proba`.
+        :param X_test: Test feature matrix.
+        :param y_test: Ground-truth target values.
+        :param json_file: File where a JSON report should be saved.
+        :returns: Dictionary containing computed evaluation metrics.
+        """
 
-    def compare_models(self, metrics_dict):
-        """Compare multiple models based on performance metrics."""
-        raise NotImplementedError
+        logger.info("Evaluating model performance...")
+
+        y_pred: np.ndarray = model.predict(X_test)
+        y_proba: np.ndarray | None = None
+        if hasattr(model, "predict_proba"):
+            y_proba = model.predict_proba(X_test)[:, 1]
+
+        metrics: MetricsDict = {
+            "accuracy": accuracy_score(y_test, y_pred),
+            "precision": precision_score(y_test, y_pred, zero_division=0),
+            "recall": recall_score(y_test, y_pred, zero_division=0),
+            "f1_score": f1_score(y_test, y_pred, zero_division=0),
+        }
+
+        metrics["roc_auc"] = roc_auc_score(y_test, y_proba) if y_proba is not None else float("nan")
+
+        print("Evaluation metrics:")
+        for key, value in metrics.items():
+            print(f"{key.upper()}: {value:.3f}")
+
+        print("Classification Report:")
+        print("\n" + classification_report(y_test, y_pred))
+
+        return metrics
+
+    @staticmethod
+    def save_metrics_to_json(metrics: MetricsDict, json_path: Path) -> None:
+        """
+        Save evaluation metrics to a JSON file.
+
+        :param metrics: Dictionary containing model metrics.
+        :param path: Destination file path.
+        """
+
+        json_path.parent.mkdir(parents=True, exist_ok=True)
+        with open(json_path, "w", encoding="utf-8") as f:
+            json.dump(metrics, f, indent=4)
+
+    @staticmethod
+    def plot_confusion_matrix(
+        model: ClassifierMixin,
+        X_test: np.ndarray,
+        y_test: np.ndarray,
+        title: str = "Confusion Matrix",
+    ) -> None:
+        """
+        Plot a confusion matrix for a given model.
+
+        :param model: Trained classifier.
+        :param X_test: Test feature matrix.
+        :param y_test: True labels.
+        """
+        logger.info("Plotting confusion matrix...")
+
+        y_pred: np.ndarray = model.predict(X_test)
+        cm: np.ndarray = confusion_matrix(y_test, y_pred)
+
+        plt.figure(figsize=(6, 5))
+        sns.heatmap(cm, annot=True, fmt="d", cmap="Blues")
+        plt.title(title)
+        plt.xlabel("Predicted")
+        plt.ylabel("Actual")
+        plt.tight_layout()
+        plt.show()
+
+    @staticmethod
+    def compare_models(metrics_dict_by_model: dict[str, MetricsDict]) -> None:
+        """
+        Compare multiple models by printing their metrics side-by-side.
+
+        :param metrics_dict: A dictionary where keys are model names
+                             and values are metric dictionaries.
+        Example:
+            {
+                "LogisticRegression": {"accuracy": 0.84, "f1": 0.81},
+                "RandomForest": {"accuracy": 0.89, "f1": 0.86},
+            }
+        """
+        # TODO Optionally add coloring
+
+        logger.info("Comparing models...")
+
+        for model_name, metrics in metrics_dict_by_model.items():
+            print(f"\n===== {model_name} =====")
+            for metric, value in metrics.items():
+                print(f"{metric}: {value:.3f}")
