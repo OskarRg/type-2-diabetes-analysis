@@ -39,10 +39,7 @@ def test_correlation_analysis_basic():
     )
 
     fs = FeatureSelector()
-    corr_sorted, selected = fs.correlation_analysis(df, target="target", top_n=2)
+    corr_sorted = fs.correlation_analysis(df, target="target")
 
     # corr_sorted return the whole list
     assert corr_sorted.index.tolist() == ["feat_1", "feat_2", "feat_3"]
-
-    # returns top_n best features
-    assert selected == ["feat_1", "feat_2"]

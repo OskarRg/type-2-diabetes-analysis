@@ -2,14 +2,11 @@ import json
 import logging
 from pathlib import Path
 
-import matplotlib.pyplot as plt
 import numpy as np
-import seaborn as sns
 from sklearn.base import ClassifierMixin
 from sklearn.metrics import (
     accuracy_score,
     classification_report,
-    confusion_matrix,
     f1_score,
     precision_score,
     recall_score,
@@ -41,6 +38,7 @@ class ModelEvaluator:
         model: ClassifierMixin,
         X_test: np.ndarray | list[list[float]],
         y_test: np.ndarray | list[int],
+        threshold: float,
     ) -> MetricsDict:
         """
         Evaluate a model and compute standard classification metrics.
@@ -54,10 +52,12 @@ class ModelEvaluator:
 
         logger.info("Evaluating model performance...")
 
-        y_pred: np.ndarray = model.predict(X_test)
         y_proba: np.ndarray | None = None
         if hasattr(model, "predict_proba"):
             y_proba = model.predict_proba(X_test)[:, 1]
+            y_pred = (y_proba >= threshold).astype(int)
+        else:
+            y_pred = model.predict(X_test)
 
         metrics: MetricsDict = {
             "accuracy": accuracy_score(y_test, y_pred),
@@ -73,7 +73,7 @@ class ModelEvaluator:
             print(f"{key.upper()}: {value:.3f}")
 
         print("Classification Report:")
-        print("\n" + classification_report(y_test, y_pred))
+        print("\n" + classification_report(y_test, y_pred, zero_division=0))
 
         return metrics
 
@@ -89,33 +89,6 @@ class ModelEvaluator:
         json_path.parent.mkdir(parents=True, exist_ok=True)
         with open(json_path, "w", encoding="utf-8") as f:
             json.dump(metrics, f, indent=4)
-
-    @staticmethod
-    def plot_confusion_matrix(
-        model: ClassifierMixin,
-        X_test: np.ndarray,
-        y_test: np.ndarray,
-        title: str = "Confusion Matrix",
-    ) -> None:
-        """
-        Plot a confusion matrix for a given model.
-
-        :param model: Trained classifier.
-        :param X_test: Test feature matrix.
-        :param y_test: True labels.
-        """
-        logger.info("Plotting confusion matrix...")
-
-        y_pred: np.ndarray = model.predict(X_test)
-        cm: np.ndarray = confusion_matrix(y_test, y_pred)
-
-        plt.figure(figsize=(6, 5))
-        sns.heatmap(cm, annot=True, fmt="d", cmap="Blues")
-        plt.title(title)
-        plt.xlabel("Predicted")
-        plt.ylabel("Actual")
-        plt.tight_layout()
-        plt.show()
 
     @staticmethod
     def compare_models(metrics_dict_by_model: dict[str, MetricsDict]) -> None:

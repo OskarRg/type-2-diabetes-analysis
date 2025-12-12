@@ -1,0 +1,38 @@
+data:
+  input_path: "data/diabetes.csv"
+  target_column: "Diabetes"
+  preprocessing:
+    remove_outliers: true
+    drop_in_fix_categorical: false
+  feature_selection:
+    enabled: true
+    method: "correlation"
+    top_k: 6
+    threshold: 0.05
+
+experiments:
+  # logistic_regression:
+  #   - name: "LR_baseline"
+  #     params:
+  #       C: 1.0
+  #       max_iter: 1000
+  #       solver: "lbfgs"
+  #     threshold: 0.2
+
+  random_forest:
+  #   - name: "RF_deep"
+  #     params:
+  #       n_estimators: 300
+  #       max_depth: 20
+  #       random_state: 42
+  #       n_jobs: -1
+  #       class_weight: "balanced"
+  #     threshold: 0.2
+    - name: "RF_deepest"
+      params:
+        n_estimators: 300
+        max_depth: 20
+        random_state: 42
+        n_jobs: -1
+        class_weight: "balanced"
+      threshold: 0.3

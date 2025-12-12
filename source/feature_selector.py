@@ -12,8 +12,7 @@ class FeatureSelector:
         df: pd.DataFrame,
         target: str,
         method: str = "pearson",
-        top_n: int = 10,
-    ) -> tuple[pd.Series, list[str]]:
+    ) -> pd.Series:
         """
         Perform correlation analysis between each feature and the target.
 
@@ -26,9 +25,7 @@ class FeatureSelector:
         corr: pd.Series = df.corr(method=method)[target].drop(target)
         corr_sorted: pd.Series = corr.abs().sort_values(ascending=False)
 
-        selected_features: list[str] = corr_sorted.head(top_n).index.tolist()
-
-        return corr_sorted, selected_features
+        return corr_sorted
 
     def select_features_by_importance(
         self,
