@@ -1,7 +1,7 @@
 import time
 from enum import Enum
 from pathlib import Path
-from typing import Literal, TypeAlias, TypedDict
+from typing import Literal, NotRequired, TypeAlias, TypedDict
 
 import pandas as pd
 from sklearn.model_selection import train_test_split
@@ -76,6 +76,17 @@ class MetricsDict(TypedDict):
     recall: float
     f1_score: float
     roc_auc: float
+
+
+class ExperimentResult(TypedDict):
+    experiment_name: str
+    model_type: str
+    params: LogisticRegressionParams | RandomForestParams
+    threshold: float
+    metrics: MetricsDict
+    cm_plot_path: str
+    timestamp: str
+    roc_plot_path: NotRequired[str]
 
 
 SplittedData: TypeAlias = list[pd.DataFrame, pd.DataFrame, pd.Series, pd.Series]

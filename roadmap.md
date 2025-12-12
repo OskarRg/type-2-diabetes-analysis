@@ -31,14 +31,17 @@
 - [x] Train models: Logistic Regression, Random Forest, XGBoost, ...
 - [x] Save the best models to files
 - [x] Implement `ModelEvaluator` class
-- [ ] Create a simple YAML config file
+- [x] Create a simple YAML config file
 
 ### 🔹 Stage 6 – Evaluation and Interpretation
 - [x] Compute evaluation metrics (Accuracy, Precision, Recall, F1, AUC) (might be done in stage 5 already)  
-- [ ] Visualize results (ROC curve, confusion matrix)
-- [ ] Optimize models hyperparameters
-- [ ] Compare model performance
-- [ ] Create a dynamic configuration enabling easy testing and research
+- [x] Visualize results (ROC curve, confusion matrix)
+- [x] Create a dynamic configuration enabling easy testing and research
+- [x] Refactor the code (`pipeline.py` mostly)
+- [ ] Add proper train/val/test split or use cross-validation to validate more reliably
+- [ ] Optimize models hyperparameters - run a few experiments with good testing methodology
+- [ ] Compare model performance - save results to a Markdown file or LaTeX report
+- [ ] Add tests for `pipeline.py`, `utils.py`, and `config.py`
 
 
 ### 🔹 Stage 7 – Reporting and Presentation
@@ -55,7 +58,7 @@ This approach also allows saving **experiment results separately**, making it ea
 
 ---
 
-### How it could Works
+### How it could work (outdated atm)
 
 1. **Dynamic `Pipeline.run()`**  
    - The `run()` method would be dependant on parameters like:

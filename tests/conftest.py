@@ -2,6 +2,7 @@ import pandas as pd
 import pytest
 
 
+#  (yes, tests are mostly generated, but I have read and reviewed them)
 @pytest.fixture
 def sample_df() -> pd.DataFrame:
     """Simple clean dataset (no missing values, valid categorical)."""

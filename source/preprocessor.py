@@ -146,3 +146,28 @@ class Preprocessor:
         logger.debug(f"Split complete: train size = {X_train.shape}, test size = {X_test.shape}")
 
         return X_train, X_test, y_train, y_test
+
+    def remove_outliers(self, df: pd.DataFrame, columns: list[str] | None = None) -> pd.DataFrame:
+        """
+        Remove outliers that were detected using IQR.
+
+        :param df: Input DataFrame.
+        :param columns: Columns that are taken into consideration when removing outliers.
+        :return: DataFrame without outliers.
+        """
+        df_clean: pd.DataFrame = df.copy()
+        columns = columns if columns else df_clean.columns
+        for col in columns:
+            if df_clean[col].nunique() <= 3:
+                continue
+
+            Q1: float = df_clean[col].quantile(0.25)
+            Q3: float = df_clean[col].quantile(0.75)
+            IQR: float = Q3 - Q1
+
+            lower_bound: float = Q1 - 1.5 * IQR
+            upper_bound: float = Q3 + 1.5 * IQR
+            df_clean = df_clean[(df_clean[col] >= lower_bound) & (df_clean[col] <= upper_bound)]
+
+        logger.debug(f"Outliers removed. Shapes: {df.shape} -> {df_clean.shape}")
+        return df_clean
