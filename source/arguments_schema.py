@@ -14,21 +14,38 @@ class RandomForestParams(BaseModel):
     n_jobs: int = -1
 
 
+class XGBParams(BaseModel):
+    n_estimators: int
+    learning_rate: float
+    max_depth: int
+    scale_pos_weight: float
+
+
 class LRExperiment(BaseModel):
     name: str
     params: LogisticRegressionParams
-    threshold: float = 0.3
+    use_cross_validation: bool = False
+    threshold: float = 0.5
 
 
 class RFExperiment(BaseModel):
     name: str
     params: RandomForestParams
+    use_cross_validation: bool = False
+    threshold: float = 0.5
+
+
+class XGBExperiment(BaseModel):
+    name: str
+    params: XGBParams
+    use_cross_validation: bool = False
     threshold: float = 0.5
 
 
 class Experiments(BaseModel):
     logistic_regression: list[LRExperiment] = []
     random_forest: list[RFExperiment] = []
+    xgboost: list[XGBExperiment] = []
 
 
 class FeatureSelectionParams(BaseModel):
