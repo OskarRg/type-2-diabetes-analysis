@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING
 
 import numpy as np
 import pandas as pd
+from sklearn.model_selection import StratifiedKFold, cross_validate, train_test_split
 
 from source.arguments_schema import (
     FeatureSelectionParams,
@@ -21,9 +22,13 @@ from source.model_trainer import (
     LogisticRegressionStrategy,
     ModelTrainer,
     RandomForestStrategy,
+    XGBoostStrategy,
 )
 from source.preprocessor import Preprocessor
 from source.utils import (
+    SCORING_METRICS,
+    CvMetricStats,
+    CvResults,
     ExperimentResult,
     FixCategoricalStrategy,
     prepare_data_split,
@@ -97,6 +102,19 @@ class Pipeline:
                 experiment_config=exp,
                 strategy_cls=RandomForestStrategy,
                 model_type_name="RandomForest",
+                data=(X_train, y_train, X_test, y_test),
+                plots_dir=plots_dir,
+                timestamp=timestamp,
+                advanced_plots=True,
+            )
+            all_results.append(result)
+
+        logger.info("--- Starting XGBoost Experiments ---")
+        for exp in self.params.experiments.xgboost:
+            result = self._run_single_experiment(
+                experiment_config=exp,
+                strategy_cls=XGBoostStrategy,
+                model_type_name="XGBoost",
                 data=(X_train, y_train, X_test, y_test),
                 plots_dir=plots_dir,
                 timestamp=timestamp,
@@ -184,12 +202,66 @@ class Pipeline:
         params_dict: dict = experiment_config.params.model_dump()
         strategy: BaseModelStrategy = strategy_cls(params=params_dict)
         self.model_trainer.set_strategy(strategy)
-        model: ClassifierMixin = self.model_trainer.train(X_train, y_train)
-
         current_threshold: float = experiment_config.threshold
+        use_cross_validation: bool = experiment_config.use_cross_validation
+        metrics_extra_info = {}
+
+        if use_cross_validation:
+            logger.info("Performing 5-Fold Cross-Validation...")
+            try:
+                model_for_cv = self.model_trainer.get_estimator()
+
+                cv: StratifiedKFold = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
+
+                cv_results = cross_validate(
+                    model_for_cv, 
+                    X_train, 
+                    y_train, 
+                    cv=cv, 
+                    scoring=SCORING_METRICS
+                )
+
+                cv_metrics_structure: CvResults = {}
+
+                for metric in SCORING_METRICS:
+                    key = f"test_{metric}"
+                    if key in cv_results:
+                        scores: CvMetricStats = cv_results[key]
+                        cv_metrics_structure[metric] = {
+                            "mean": float(np.mean(scores)),
+                            "std": float(np.std(scores))
+                        }
+
+                metrics_extra_info["cv"] = cv_metrics_structure
+                metrics_extra_info["validation_method"] = "5-Fold CV"
+
+            except AttributeError:
+                logger.warning(
+                    "ModelTrainer strategy does not support 'get_estimator'. Skipping CV."
+                )
+            except Exception as e:
+                logger.error(f"Cross Validation failed: {e}")
+
+            logger.info("Retraining model on FULL X_train for testing...")
+            model: ClassifierMixin = self.model_trainer.train(X_train, y_train)
+
+        else:
+            X_train_inner, X_val, y_train_inner, y_val = train_test_split(
+                X_train, y_train, test_size=0.2, random_state=42, stratify=y_train
+            )
+
+            model: ClassifierMixin = self.model_trainer.train(X_train_inner, y_train_inner)
+
+            val_metrics = self.model_evaluator.evaluate(
+                model, X_val, y_val, threshold=current_threshold
+            )
+            metrics_extra_info["validation"] = val_metrics
+            metrics_extra_info["validation_method"] = "Hold-out (Train/Val Split)"
+
         metrics: dict = self.model_evaluator.evaluate(
             model, X_test, y_test, threshold=current_threshold
         )
+        metrics.update(metrics_extra_info)
         logger.info(f"Results for {exp_name}: {metrics}")
 
         cm_path: Path = plots_dir / f"CM_{exp_name}.png"

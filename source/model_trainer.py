@@ -6,6 +6,7 @@ import pandas as pd
 from sklearn.base import ClassifierMixin
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
+from xgboost import XGBClassifier
 
 from source.utils import LogisticRegressionParams, RandomForestParams
 
@@ -18,6 +19,13 @@ class BaseModelStrategy(ABC):
     """
 
     @abstractmethod
+    def get_estimator(self) -> ClassifierMixin:
+        """
+        Returns an unfitted model instance with configured parameters.
+        This is useful for Cross-Validation or Sklearn Pipelines.
+        """
+        raise NotImplementedError
+
     def train(self, X_train: pd.DataFrame, y_train: pd.Series) -> ClassifierMixin:
         """
         Train the model strategy on the provided data.
@@ -26,10 +34,10 @@ class BaseModelStrategy(ABC):
         :param y_train: Target labels used for training.
 
         :returns: A fitted scikit-learn classifier.
-
-        :raises NotImplementedError If the method is not implemented in the subclass.
         """
-        raise NotImplementedError
+        model: ClassifierMixin = self.get_estimator()
+        model.fit(X_train, y_train)
+        return model
 
 
 class LogisticRegressionStrategy(BaseModelStrategy):
@@ -46,17 +54,13 @@ class LogisticRegressionStrategy(BaseModelStrategy):
         """
         self.params: LogisticRegressionParams = params
 
-    def train(self, X_train: pd.DataFrame, y_train: pd.Series) -> ClassifierMixin:
+    def get_estimator(self) -> ClassifierMixin:
         """
-        Train a Logistic Regression model.
+        Return an unfitted LogisticRegression classifier.
 
-        :param X_train: Feature matrix used for training.
-        :param y_train: Target labels used for training.
-        :returns: A fitted Logistic Regression model.
+        :return: LogisticRegression classifier.
         """
-        model: LogisticRegression = LogisticRegression(**self.params)
-        model.fit(X_train, y_train)
-        return model
+        return LogisticRegression(**self.params)
 
 
 class RandomForestStrategy(BaseModelStrategy):
@@ -73,17 +77,32 @@ class RandomForestStrategy(BaseModelStrategy):
         """
         self.params: RandomForestParams = params
 
-    def train(self, X_train: pd.DataFrame, y_train: pd.Series) -> ClassifierMixin:
+    def get_estimator(self) -> ClassifierMixin:
         """
-        Train a Random Forest classifier.
+        Return an unfitted RandomForestClassifier classifier.
 
-        :param X_train: Feature matrix used for training.
-        :param y_train: Target labels used for training.
-        :returns: A fitted Random Forest model.
+        :return: RandomForestClassifier classifier.
         """
-        model: RandomForestClassifier = RandomForestClassifier(**self.params)
-        model.fit(X_train, y_train)
-        return model
+        return RandomForestClassifier(**self.params)
+
+
+class XGBoostStrategy(BaseModelStrategy):
+    """
+    Initializes passed parameters to the class.
+
+    :param params: Arguments passed directly to `xgboost.XGBClassifier`.
+    """
+
+    def __init__(self, params: dict) -> None:
+        self.params = params
+
+    def get_estimator(self) -> ClassifierMixin:
+        """
+        Return an unfitted XGBClassifier classifier.
+
+        :return: XGBClassifier classifier.
+        """
+        return XGBClassifier(**self.params)
 
 
 class ModelTrainer:
@@ -105,6 +124,14 @@ class ModelTrainer:
         :param strategy: Strategy object defining how the model is trained.
         """
         self.strategy = strategy
+
+    def get_estimator(self) -> ClassifierMixin:
+        """
+        Get unfitted estimator from current strategy.
+        """
+        if self.strategy is None:
+            raise ValueError("No model strategy has been set.")
+        return self.strategy.get_estimator()
 
     def train(self, X_train: pd.DataFrame, y_train: pd.Series) -> ClassifierMixin:
         """
