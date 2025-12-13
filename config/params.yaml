@@ -3,7 +3,7 @@ data:
   target_column: "Diabetes"
   preprocessing:
     remove_outliers: false
-    drop_in_fix_categorical: true
+    drop_in_fix_categorical: false
   feature_selection:
     enabled: false
     method: "correlation"
