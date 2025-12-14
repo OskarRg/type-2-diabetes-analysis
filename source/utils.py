@@ -74,6 +74,7 @@ class CvMetricStats(TypedDict):
     mean: float
     std: float
 
+
 class CvResults(TypedDict, total=False):
     recall: CvMetricStats
     precision: CvMetricStats
@@ -81,12 +82,14 @@ class CvResults(TypedDict, total=False):
     roc_auc: CvMetricStats
     accuracy: CvMetricStats
 
+
 class HoldoutResults(TypedDict, total=False):
     accuracy: float
     precision: float
     recall: float
     f1_score: float
     roc_auc: float
+
 
 class MetricsDict(TypedDict):
     accuracy: float
@@ -98,6 +101,7 @@ class MetricsDict(TypedDict):
     validation_method: str
     cv: NotRequired[CvResults]
     validation: NotRequired[HoldoutResults]
+
 
 class ExperimentResult(TypedDict):
     experiment_name: str
@@ -129,7 +133,7 @@ def prepare_data_split(df: pd.DataFrame, target_col: str, test_size: float = 0.2
 #  Things below could be moved to a config file.
 RENAME_MAPPING: dict[str, str] = {"family_histroy": "family_history"}
 
-SCORING_METRICS: list[str] = ['recall', 'precision', 'f1', 'roc_auc', 'accuracy']
+SCORING_METRICS: list[str] = ["recall", "precision", "f1", "roc_auc", "accuracy"]
 
 CATEGORICAL_MULTI: tuple[str] = ["smoking", "drinking"]
 CATEGORICAL_BINARY: tuple[str] = ["Gender", "family_history"]

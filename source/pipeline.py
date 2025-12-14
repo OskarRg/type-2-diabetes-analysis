@@ -214,11 +214,7 @@ class Pipeline:
                 cv: StratifiedKFold = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
 
                 cv_results = cross_validate(
-                    model_for_cv, 
-                    X_train, 
-                    y_train, 
-                    cv=cv, 
-                    scoring=SCORING_METRICS
+                    model_for_cv, X_train, y_train, cv=cv, scoring=SCORING_METRICS
                 )
 
                 cv_metrics_structure: CvResults = {}
@@ -229,7 +225,7 @@ class Pipeline:
                         scores: CvMetricStats = cv_results[key]
                         cv_metrics_structure[metric] = {
                             "mean": float(np.mean(scores)),
-                            "std": float(np.std(scores))
+                            "std": float(np.std(scores)),
                         }
 
                 metrics_extra_info["cv"] = cv_metrics_structure

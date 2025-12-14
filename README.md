@@ -44,11 +44,11 @@ pip install -r requirements.txt
 ### 3. Current way to run the project does not include any params or configuration file
 
 ```
-python main.py
+python __main__.py
 ```
 
 ### 4. Remember to test the project after making changes
 
 ```
-pytest -vv
+python -m pytest -vv
 ```
