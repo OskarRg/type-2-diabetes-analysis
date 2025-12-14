@@ -39,14 +39,14 @@
 - [x] Create a dynamic configuration enabling easy testing and research
 - [x] Refactor the code (`pipeline.py` mostly)
 - [x] Add proper train/val/test split or use cross-validation to validate more reliably
-- [ ] Optimize models hyperparameters - run a few experiments with good testing methodology
-- [ ] Compare model performance - save results to a Markdown file or LaTeX report
-- [ ] Add tests for `pipeline.py`, `utils.py`, and `config.py`
+- [x] Optimize models hyperparameters - run a few experiments with good testing methodology
+- [x] Compare model performance - save results to a Markdown file or LaTeX report
 
 
 ### 🔹 Stage 7 – Reporting and Presentation
-- [ ] Prepare a report with results and conclusions
+- [x] Prepare a report with results and conclusions
 - [ ] Prepare a poster visualizing results
+- [ ] Add missing unit tests for tests for `pipeline.py`, `utils.py`, and `config.py`
 
 ---
 
